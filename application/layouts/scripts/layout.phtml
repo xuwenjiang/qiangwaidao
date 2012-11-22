@@ -1,0 +1,106 @@
+<?php
+echo $this->doctype();
+$userSession = new Application_Model_Session_User();
+?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:wb="http://open.weibo.com/wb" xmlns:fb="http://ogp.me/ns/fb#">
+    <head>
+        <title>墙外道</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta content="墙外道的网站" name="description"/>
+        <meta property="wb:webmaster" content="06deef2e81d9e606" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script type="text/javascript" src="http://tjs.sjs.sinajs.cn/open/api/js/wb.js?appkey=966014353" charset="utf-8"></script>
+
+        <?php $this->headScript()->appendFile($this->baseUrl() . '/js/weibo/weibo.js'); ?>
+
+        <?php $this->headLink()->appendStylesheet($this->baseUrl() . '/css/global.css') ?>
+        <?php
+        $this->headLink()->headLink(array('rel' => 'shortcut icon',
+            'href' => $this->baseUrl() . '/img/favicon.ico',
+            'type' => 'image/x-icon'));
+        ?>
+        <?php echo $this->headMeta() ?>
+        <?php echo $this->headScript() ?> 
+        <?php echo $this->headStyle() ?>
+        <?php echo $this->headLink() ?>
+    </head>
+    <body style="height:100%;text-align: left;">
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-36454125-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+        <div class="wrapper">
+            <div class ="page">
+                <div class="header">
+                    <div class="header-logo">
+                        <a href="<?php echo $this->baseUrl() ?>/">
+                            <img src="<?php echo $this->baseUrl() ?>/img/logo.png"></img>
+                        </a>
+                    </div>
+                    <div class="header-menu">
+                        <div id="wb_connect_btn" class="weibo-account"></div>
+                        <div class="account">
+                            <?php if ($userSession->isUserLoggedIn()): ?>
+                                <?php echo '你好 ' ?>
+                                <a href="<?php echo $this->baseUrl() ?>/user/profile"><?php echo $userSession->getUser()->name ?></a>
+                                <a href="<?php echo $this->baseUrl() ?>/user/logoff">退出</a>
+                            <?php else: ?>
+                                <a href="<?php echo $this->baseUrl() ?>/user/login">登录</a>
+                                <a href="<?php echo $this->baseUrl() ?>/user/register">注册</a>
+                            <?php endif; ?>
+                        </div>
+                        <div class="navigation">
+                            <ul>
+<!--                                <li><a href="<?php echo $this->baseUrl() ?>/blogs">墙外胡话</a></li>
+                                <li><a href="<?php echo $this->baseUrl() ?>/sights">沿墙风光</a></li>
+                                <li><a href="<?php echo $this->baseUrl() ?>/posts">墙上小报</a></li>-->
+                                <li><a href="<?php echo $this->baseUrl() ?>/friends">地图功能</a></li>
+<!--                                <li><a href="<?php echo $this->baseUrl() ?>/builds">高筑破墙</a></li>-->
+                                <li><a href="<?php echo $this->baseUrl() ?>/about-me">关于我</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="main"><?php echo $this->layout()->content ?></div>
+            </div>
+            <div class="footer">
+                <div class="find-me">
+                    <a href="http://weibo.com/qiangwaidao" target="_blank"><img src="<?php echo $this->baseUrl() ?>/img/weibo.png" /></a>
+                    <a href="http://www.facebook.com/wenjiang.xu" target="_blank"><img src="<?php echo $this->baseUrl() ?>/img/facebook.png" /></a>
+                    <a href="http://twitter.com/WenjiangXu" target="_blank"><img src="<?php echo $this->baseUrl() ?>/img/twitter.png" /></a>
+                </div>
+                <div class="copyright">Copyright © 2012 墙外道</div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //CDATA[
+        function weiboLoginCallback(o)
+        {
+//            alert('a');
+            $.ajax({
+                type: "POST",
+                url: "<?php echo $this->url(array('controller' => 'weibo', 'action' => 'connect')) ?>",
+                data: o
+            }).done(function( msg ) {
+//                alert('b');
+            });
+        }
+
+        function weiboLogoutCallback()
+        {
+//            alert('logout');
+        }
+        //]
+    </script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<?php if ($this->userSession->isUserLoggedIn()): ?>
+    <div style="text-align: center">
+        <button onclick="javascript:ajaxSaveLocation()">记录我在这里</button>
+    </div>
+    <div style="height:600px;width: 945px">
+        <div style="clear: both;float: left;height:100%;width: 100%;text-align: center" id="map_canvas"></div>
+    </div>
+    <div style="clear: both;">
+        <?php if (count($this->otherUsers)): ?>
+            <p style="padding: 5px">别人在哪儿？</p>
+            <ul class="otherUser">
+                <?php foreach ($this->otherUsers as $key => $user): ?>
+                    <li id="user_<?php echo $key ?>">
+                        <div class="thumb">
+                        <?php
+                        if ($user['image'] != null) {
+                            $image = $this->baseUrl() . $user['image'];
+                        } else {
+                            if ($user['gender'] == 'male') {
+                                $image = $this->baseUrl() . '/img/avatar/male_180.png';
+                            } else {
+                                $image = $this->baseUrl() . '/img/avatar/female_180.png';
+                            }
+                        }
+                        ?>
+                        <img title="<?php echo $user['name'] ?>" onclick="javascript:markUserOnMap(<?php echo $key ?>)" src="<?php echo $image ?>" width="120px"></img>
+                        <span class="text"><?php echo $user['name'] ?></span>
+                        </div>
+                    </li>
+            <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            没有找到其他用户
+        <?php endif; ?>
+    </div>
+    <script>
+        //CDATA[
+        var map;
+        var marker;
+        var clickTimes;
+        var clickKey=-1;
+        
+        <?php $users = $this->otherUsers; ?>
+        var otherUsers= <?php echo json_encode($users ); ?>;
+        var otherMarkers = new Array();
+        
+        function getCurrentPositionSuccess(position) {
+            detectBrowser();
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+                        
+            var latlng    = new google.maps.LatLng(latitude, longitude);
+            var mapOpts   = {
+                zoom: 15,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+                
+            var canvas = document.getElementById('map_canvas');
+            map = new google.maps.Map(canvas, mapOpts);
+            var marketImage = new google.maps.MarkerImage(
+                '<?php if($this->user->image){
+                    echo $this->baseUrl() . $this->user->image;
+                } else {
+                    if($this->user->gender == 'male'){
+                        echo $this->baseUrl().'/img/avatar/male_180.png';
+                    } else {
+                        echo $this->baseUrl().'/img/avatar/female_180.png';
+                    }
+                }
+                ?>',
+                new google.maps.Size(50, 50),
+                new google.maps.Point(0, 0),
+                null,
+                new google.maps.Size(50, 50)
+            );
+                
+            var marketshadow = new google.maps.MarkerImage(
+                '<?php echo $this->baseUrl().'/img/avatar/shadow.png'; ?>',
+                new google.maps.Size(50, 50),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(20, 45),
+                new google.maps.Size(50, 50)
+            );
+                
+            var markerOpts = {
+                animation: google.maps.Animation.DROP,
+                icon: marketImage,
+                shadow: marketshadow,
+                position: latlng,
+                map: map
+            }
+            
+            marker = new google.maps.Marker(markerOpts);
+            
+                var lat = marker.getPosition().lat();
+                var lng = marker.getPosition().lng();
+                $.ajax({
+                    type: "POST",
+                    url: "<?php echo $this->url(array('controller'=>'friends','action'=>'save-location'))?>",
+                    data: { latitude: lat, longitude: lng}
+                }).done(function( msg ) {
+//                    alert('谢谢，'+msg);
+                });
+            
+        }
+                    
+        function getCurrentPositinFailed(error){
+            alert('获取地理信息失败');
+        }
+        
+        function markUserOnMap(key)
+        {
+            if(clickKey==key){
+                clickTimes++;
+                if(clickTimes>=10){
+                    alert('我真的不知道更多了，那啥，你想知道啥？告诉我scac59414@gmail.com');
+                    return;
+                }
+                if(clickTimes%3==0){
+                    alert('我告诉你['+otherUsers[key]['name']+']的注册邮箱哦!  ' +otherUsers[key]['username']);
+                    return;
+                }
+            }else{
+                clickKey=key;
+                clickTimes = 0;
+            }
+            
+            var latitude = otherUsers[key]['last_latitude'];
+            var longitude = otherUsers[key]['last_longitude'];
+            var latlng    = new google.maps.LatLng(latitude, longitude);
+            
+            var distance = google.maps.geometry.spherical.computeDistanceBetween (marker.getPosition(), latlng);
+            
+            var km = distance/1000;
+            km= Math.round(km);
+            
+            if(km > 4000){
+                map.setCenter(marker.getPosition());
+                map.setZoom(2);
+                alert('跨越大洋，远在'+km+'公里外，你那里还好么？');
+            }else if(km>1000){
+                map.setCenter(marker.getPosition());
+                map.setZoom(4);
+                alert('海内寸知己，天涯若比邻，你俩距离:'+km+'公里')
+            }else if(km>500){
+                map.setCenter(marker.getPosition());
+                map.setZoom(5);
+                alert('区区'+km+'公里，根本不在便捷的交通话下')
+            }else if(km>20){
+                map.setCenter(marker.getPosition());
+                map.setZoom(9);
+                alert('挺近，没事儿多联系:'+km+'公里');
+            }else if(km>10){
+                map.setCenter(marker.getPosition());
+                map.setZoom(10);
+                alert('挺近，没事儿多联系:'+km+'公里');
+            }else if(km>0){
+                map.setCenter(marker.getPosition());
+                map.setZoom(14);
+                alert('我们都活在这个城市里面:'+km+'公里');
+            }else if(distance>0){
+                map.setCenter(marker.getPosition());
+                map.setZoom(16);
+                alert('我来到你的城市，走过你来时的路，距离:'+Math.round(distance)+'米');
+            }else{
+                map.setCenter(marker.getPosition());
+                map.setZoom(19);
+                alert('你们……是不是距离-5cm了');
+            }
+            
+            var imageUrl = $('#user_'+key).find('img').attr('src');
+            
+            var marketImage = new google.maps.MarkerImage(
+                imageUrl,
+                new google.maps.Size(50, 50),
+                new google.maps.Point(0, 0),
+                null,
+                new google.maps.Size(50, 50)
+            );
+                
+            var marketshadow = new google.maps.MarkerImage(
+                '<?php echo $this->baseUrl().'/img/avatar/shadow.png'; ?>',
+                new google.maps.Size(50, 50),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(20, 45),
+                new google.maps.Size(50, 50)
+            );
+                
+            for(var i=0;i<otherMarkers.length;i++){
+                if( i == key){
+                    continue;
+                }
+                if(otherMarkers[i]!=undefined){
+                    otherMarkers[i].setAnimation(null);
+                    otherMarkers[i].setZIndex(-1);
+                }
+            }
+            
+            if(otherMarkers[key]!=undefined){
+                otherMarkers[key].setZIndex(-1);
+                otherMarkers[key].setAnimation(google.maps.Animation.BOUNCE);
+            } else {
+                var markerOpts = {
+                    animation: google.maps.Animation.DROP,
+                    icon: marketImage,
+                    shadow: marketshadow,
+                    position: latlng,
+                    map: map
+                }
+                otherMarkers[key] = new google.maps.Marker(markerOpts);
+            }
+            
+        }
+        
+        function detectBrowser() {
+            var useragent = navigator.userAgent;
+            var mapdiv = document.getElementById("map_canvas");
+            if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+                mapdiv.style.width = '100%';
+                mapdiv.style.height = '100%';
+            } else {
+                mapdiv.style.width = '100%';
+                mapdiv.style.height = '600px';
+            }
+        }
+        
+        $(document).ready(function() {
+            
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(getCurrentPositionSuccess,getCurrentPositinFailed);
+            } else {
+                alert('你的浏览器不支持地理功能，请使用现代浏览器，比如firefox或chrome');
+            }     
+        });
+        
+        function ajaxSaveLocation(){
+            var lat = marker.getPosition().lat();
+            var lng = marker.getPosition().lng();
+            $.ajax({
+                type: "POST",
+                url: "<?php echo $this->url(array('controller'=>'friends','action'=>'save-location'))?>",
+                data: { latitude: lat, longitude: lng}
+            }).done(function( msg ) {
+                alert('谢谢，'+msg);
+            });
+        }
+        //]
+    </script>
+<?php else: ?>
+    <div class="centre">
+        <h1>请先<a href="<?php echo $this->url(array('controller' => 'user', 'action' => 'login')) ?>">登录</a></h1>
+    </div>
+<?php endif; ?>

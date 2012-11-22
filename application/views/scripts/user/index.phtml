@@ -1,0 +1,6 @@
+<?php if($this->userSession->isUserLoggedIn()): ?>
+<h1>欢迎回来，<?php echo $this->userSession->getUser()->name?></h1>
+<h2>您可以四处逛逛，但本站目前没啥功能</h2>
+<?php else: ?>
+<h1>请先登录</h1>
+<?php endif; ?>

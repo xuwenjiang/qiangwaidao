@@ -1,0 +1,125 @@
+/* 
+    Document   : global
+    Created on : 07-Jun-2012, 17:29:41
+    Author     : wenjiangxu
+    Description:
+        定义网站基本风格css
+*/
+body {background:#fff;margin:0;font-size: 13px}
+ul {list-style: none;}
+a {text-decoration:none;}
+a:link {color:blue;}    /* unvisited link */
+a:visited {color:blue;} /* visited link */
+a:hover {color:window;}   /* mouse over link */
+a:active {color:blue;}  /* selected link */
+
+.error {color: red;}
+
+.zend_form{  
+  background:#fff; 
+}  
+
+.zend_form dt{  
+  padding:0;  
+  clear:both;  
+  width: 20%;
+  font-size: 13px;
+  float:left;  
+  text-align:right;  
+  margin:10px 5px 5px;  
+}  
+
+.zend_form dd {
+   float:left;
+   margin: 5px;
+}
+
+.zend_form dd .long{
+  width: 200px;
+}
+
+.zend_form dd input{
+  padding:5px;
+}  
+
+.zend_form dd .description{
+  font-size:8px;
+  color: gray;
+}
+
+.zend_form dd ul {list-style: none;}
+
+.zend_form dd ul li{margin: 0px}
+
+.zend_form dd .errors{
+  font-size:8px;
+  color: red;
+}
+
+.zend_form p{  
+  padding:0;  
+  margin:0;  
+}  
+
+.zend_form input, .zend_form textarea{  
+  margin:0 0 2px 0;  
+  padding:0;  
+}  
+
+.submit{  
+  float:right;  
+}  
+
+.required:before{content:'*';color: red}  
+
+
+.wrapper { background-image: url(/img/bg.jpg);background-repeat: repeat;padding: 0;}
+/* whole page css*/
+.page { width:965px; background:transparent;margin: auto;}
+/* header area css */
+.header { height: 63px;margin: 0;padding: 0;}
+.header .header-logo{float:left;position:relative;}
+.header .header-menu{float:right;width: 752px;height: 100%}
+.header .header-menu .account{font-size: 14px;float: right}
+.header .header-menu .weibo-account{font-size: 14px;height: 100%;float: right;padding: 2px}
+.header .header-menu .navigation{line-height: 49px;font-size: 16px;}
+.header .header-menu .navigation ul {list-style: none;}
+.header .header-menu .navigation ul li{float: left;margin-right: 20px;}
+.header .header-menu .navigation ul li a {color:#ad3d11}
+.header .header-menu .navigation ul li a:hover {color:white;background-color:#ad3d11}
+/* main area css */
+.main { min-height: 720px; margin-top: 20px;margin-bottom: 20px}
+.main .lefthalf {float: left; width: 50%}
+.main .righthalf {float: right; width: 50%}
+.main .centre {text-align: center}
+
+.otherUser {padding: 0px}
+.otherUser li{margin: 2px;list-style-position:outside;float: left}
+
+.thumb {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border: 0px dashed #444;
+    margin: 10px;
+    float: left
+}
+.text {
+    display: none;
+    font-size: larger;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background: #999;
+    text-align: center
+}
+.thumb:hover .text {
+    display: block
+}
+
+/* footer area css */
+.footer {border-top: 2px solid black;height: 145px;background-color: black;clear:both;}
+.footer .find-me {margin-top: 10px;text-align: center}
+.footer .find-me img {width: 50px;padding: 5px;}
+.footer .copyright {color: #7B7D85;text-align: center;font-size: 12px;margin-top: 10px}

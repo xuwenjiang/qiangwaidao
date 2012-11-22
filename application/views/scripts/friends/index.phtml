@@ -1,0 +1,31 @@
+<div style="text-align: center;">
+    <h4>墙外花草，意在提供所有注册墙外道的用户的地理信息，您可以在此留下您的足迹，供其他网友查看</h4>
+    <h3 style="color: red">
+        提示：您可以不使用该功能，若您确认使用，则本网会记录您的地理信息
+    </h3>
+    <?php if ($this->userSession->isUserLoggedIn()): ?>
+        <input id="agree_checkbox" type="checkbox">我同意，我要使用</input>
+        <script type="text/javascript">
+            //CDATA[
+            $('#agree_checkbox').click(function(){
+                if ($('#agree_checkbox').attr('checked')) {
+                    $('#agree_button').attr("disabled", false);
+                } else {
+                    $('#agree_button').attr("disabled", true); 
+                }
+            })
+            //]
+        </script>
+        <p>
+            请点击“使用”开始使用
+        </p>
+        <button id="agree_button" disabled onclick="location.href='<?php echo $this->url(array('controller' => 'friends', 'action' => 'map')) ?>'">使用</button>
+    <?php else: ?>
+        <div class="centre">
+            <h1>请先<a href="<?php echo $this->url(array('controller'=>'user','action'=>'login'))?>">登录</a></h1>
+        </div>
+    <?php endif; ?>
+    <p>
+        功能由Google Maps实现，本网不保证数据的准确性
+    </p>
+</div>

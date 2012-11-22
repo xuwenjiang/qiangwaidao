@@ -1,0 +1,54 @@
+<h1>个人信息修改</h1>
+<p style="color: red">若上传头像后没有显示请稍后刷新几次</p>
+<div style="float: left;width: 40%; background-color: #ccffcc">
+    <?php echo $this->userEditForm ?>
+    <div style="clear: left;text-align: center">
+        <image style="width: 180px" src="<?php echo $this->baseUrl() . $this->user->image ?>"></image>
+    </div>
+    <div style="clear: left;text-align: center">
+        <input width="30px" type="button" id="display_crop" value="显示剪裁"></input>
+    </div>
+</div>
+
+<div style="float: right;width: 60%;text-align: center;display: none" id="cropwrapper">
+
+    <image id="cropbox" style="width: 70%"  src="<?php echo $this->baseUrl() . $this->user->image ?>"></image>
+    <form action="<?php echo $this->url(array('controller' => 'user', 'action' => 'profile')) ?>" method="post" onsubmit="return checkCoords();">
+        <input type="hidden" id="x" name="x" />
+        <input type="hidden" id="y" name="y" />
+        <input type="hidden" id="w" name="w" />
+        <input type="hidden" id="h" name="h" />
+        <input type="hidden" id="ratio" name="ratio"/>
+        <input type="hidden" name="crop" value="1"/>
+        <input type="submit" value="剪裁" />
+    </form>
+</div>
+<script type="text/javascript">
+    //CDATA[
+    $('#display_crop').click(function(){
+        $('#cropwrapper').toggle();
+        if(this.value=='显示剪裁'){
+            this.value= '匿藏剪裁';
+        }else{
+            this.value='显示剪裁';
+        }
+    });
+    
+    $(window).load(function() {
+        
+        var screenImage = $("#cropbox");
+
+        var theImage = new Image();
+        
+        theImage.src = screenImage.attr("src");
+        
+        var realWidth = theImage.width;
+        
+        var displayWidth = $("#cropbox").width();
+        
+        var ratio = Number(realWidth)/Number(displayWidth);
+        $('#ratio').attr('value',ratio);
+    });
+    
+    //]
+</script>
